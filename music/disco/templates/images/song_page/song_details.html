@@ -1,0 +1,110 @@
+{% extends 'images/layouts/main.html' %}
+
+<!DOCTYPE html>
+<body>
+
+{% block content %}
+<br>
+<br>
+<br>
+<br>
+<section class="bg-light py-4 my-5" style="min-height:600px;"> 
+    <div class="container my-3">
+    <div class="row">
+    <div class="col-12">
+    
+    <h4 class="mb-3"><b>GENRE:<span>{{cn}}</span></h4> 
+    <hr style="border-color: #000000;">
+    <nav style="--bs-breadcrumb-divider: '>';" aria-label="breadcrumb">
+        <ol class="breadcrumb">
+          <li class="breadcrumb-item"><a href="{% url 'home'%}">HOME</a></li>
+          <li class="breadcrumb-item"><a href="{% url 'Category_select' c_song.category_name %}">GENRE/CATEGORY</a></li>
+          <li class="breadcrumb-item active" aria-current="page">{{c_song.name | upper}}</li>
+        </ol>
+      </nav>
+    </div>
+    <div class="card" style="max-width: fit-content;">
+        <div class="row g-0">
+          <div class="col-4">
+            <img src="{{c_song.song_image.url}}" class="img-fluid rounded-start" alt="...">
+            <audio controls>
+                <source src="{{c_song.audio_file.url}}" type="audio/mpeg">
+                Your browser does not support the audio tag.
+              </audio>
+        </div>
+          <div class="col-md-8">
+            <div class="card-body">
+              <h5 class="text-success mx-4">{{c_song.name | upper}}</h5>
+              <p class="card-text mx-4"><b>SINGER :</b>  {{c_song.Singer}}</p>
+              <p class="card-text mx-4"><b>WRITER :</b>  {{c_song.writer}}</p>
+              <p class="card-text mx-4"><b>MUSIC :</b>   {{c_song.music}}</p>
+              <p class="card-text mx-4" ><b>LANGUAGE :</b>{{c_song.language}}</p>
+              <p class="card-text mx-4"><b>MOVIE :</b>{{c_song.movie_name}}</p>
+              <p class="card-text mx-4"><small class="text-muted">Description:{{c_song.description}} </small></p>
+              <button class="btn btn-danger mx-4" id="btnFav"><i class="fa fa-heart"></i></button>
+              <button class="btn btn-outline-success mx-4" id="btnWatch">listen later</button>
+              <input type="hidden" value="{{c_song.id}}" id="pid"></div>
+          </div>
+        </div>
+      </div>
+</div>
+</div></section>
+
+
+</body>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function(event) {
+    const btnFav = document.getElementById("btnFav");
+    const pid = document.getElementById("pid");
+    btnFav.addEventListener("click", function() {
+     
+     let postObj = { 
+         'pid': pid.value
+     }
+     console.log(postObj);
+     fetch("/fav",{
+       method: 'POST',
+       credentials: 'same-origin',
+       headers:{
+           'Accept': 'application/json',
+           'X-Requested-With': 'XMLHttpRequest',
+           'X-CSRFToken': '{{ csrf_token }}',
+       },
+       body: JSON.stringify(postObj)
+     }).then(response => {
+       return response.json();
+     }).then(data => {
+       console.log(data);
+       alert(data['status']);
+     });
+   
+});
+btnWatch.addEventListener("click", function() {
+     
+     let postObj = { 
+         'pid': pid.value
+     }
+     console.log(postObj);
+     fetch("/watch_later",{
+       method: 'POST',
+       credentials: 'same-origin',
+       headers:{
+           'Accept': 'application/json',
+           'X-Requested-With': 'XMLHttpRequest',
+           'X-CSRFToken': '{{ csrf_token }}',
+       },
+       body: JSON.stringify(postObj)
+     }).then(response => {
+       return response.json();
+     }).then(data => {
+       console.log(data);
+       alert(data['status']);
+     });
+   
+});
+});
+</script>
+{%endblock content %}
+
+</html>
